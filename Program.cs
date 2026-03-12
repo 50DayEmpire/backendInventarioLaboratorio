@@ -4,6 +4,7 @@ using BackendInventario.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Scalar.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,6 +67,9 @@ builder.Services.AddAuthorization();
 // 4. Controllers
 builder.Services.AddControllers();
 
+// Agregar servicios de OpenAPI
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
 
 // 5. Seed Roles
@@ -73,6 +77,21 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await SeedRoles(services);
+}
+
+// 2. Configurar el pipeline HTTP
+if (app.Environment.IsDevelopment())
+{
+    // Genera el JSON de la especificación
+    app.MapOpenApi();
+    
+    // Genera la interfaz visual de Scalar
+    app.MapScalarApiReference(options => 
+    {
+        options.WithTitle("Mi API de Inventario")
+               .WithTheme(ScalarTheme.Moon) // Hay varios temas: Moon, Solarized, etc.
+               .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
 }
 
 // Middleware
