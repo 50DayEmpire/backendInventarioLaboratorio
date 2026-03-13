@@ -1,0 +1,13 @@
+bin/
+obj/
+out/
+.git/
+.vs/
+.vscode/
+
+# Ignorar archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+
+# Ignorar imagenes existentes en wwwroot
+wwwroot/
