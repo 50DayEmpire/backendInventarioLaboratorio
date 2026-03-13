@@ -22,7 +22,10 @@ public class SolicitudController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<object>>> GetSolicitudes()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var claimsIdentificador = User.FindAll("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+        var userId = claimsIdentificador
+            .FirstOrDefault(c => !c.Value.Contains("@"))?.Value;
+        Console.WriteLine($"ID de usuario extraído del token: {userId}");
         var isAdmin = User.IsInRole("Admin");
 
         IQueryable<Solicitud> query = _context.Solicitudes
